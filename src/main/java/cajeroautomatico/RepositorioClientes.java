@@ -1,17 +1,24 @@
 package cajeroautomatico;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RepositorioClientes {
-    private List<Cliente> clientes = new ArrayList<>();
+    private List<Cliente> clientes;
 
-    public void agregarCliente(Cliente c) {
-        clientes.add(c);
+    public RepositorioClientes() {
+        clientes = new ArrayList<>();
     }
 
-    public Cliente buscarCliente(String usuario) {
+    public void agregarCliente(Cliente cliente) {
+        clientes.add(cliente);
+    }
+
+    public Cliente buscarPorUsuario(String usuario) {
         for (Cliente c : clientes) {
-            if (c.usuario.equals(usuario)) return c;
+            if (c.usuario.equals(usuario)) {
+                return c;
+            }
         }
         return null;
     }
