@@ -1,91 +1,65 @@
 package cajeroautomatico;
+/**
+ *
+ * @author Sveen Urzua
+ */
+import cajeroautomatico.datos.RepositorioClientes;
+import cajeroautomatico.modelo.Cliente;
+import cajeroautomatico.modelo.Cuenta;
+import cajeroautomatico.modelo.CuentaCredito;
+import cajeroautomatico.modelo.CuentaDebito;
 
 import javax.swing.*;
-import java.awt.event.*;
 
 public class MenuAdminForm extends JFrame {
-    private JTextField txtNombre, txtIne, txtDireccion, txtTelefono, txtUsuario, txtContrasena;
-    private JButton btnRegistrar;
-    private RepositorioClientes repositorio;
-
-    public MenuAdminForm(RepositorioClientes repositorio) {
-        this.repositorio = repositorio;
-
+    public MenuAdminForm() {
         setTitle("Registro de Cliente");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setLayout(null);
+        getContentPane().setBackground(new java.awt.Color(255, 245, 230));
 
-        JLabel lblNombre = new JLabel("Nombre:");
-        lblNombre.setBounds(20, 20, 100, 25);
-        add(lblNombre);
-        txtNombre = new JTextField();
-        txtNombre.setBounds(130, 20, 200, 25);
-        add(txtNombre);
+        JTextField txtNombre = new JTextField(); txtNombre.setBounds(150, 20, 200, 25);
+        JTextField txtINE = new JTextField(); txtINE.setBounds(150, 60, 200, 25);
+        JTextField txtDireccion = new JTextField(); txtDireccion.setBounds(150, 100, 200, 25);
+        JTextField txtTelefono = new JTextField(); txtTelefono.setBounds(150, 140, 200, 25);
+        JTextField txtMonto = new JTextField(); txtMonto.setBounds(150, 180, 200, 25);
+        JComboBox<String> comboTipoCuenta = new JComboBox<>(new String[]{"Crédito", "Débito"});
+        comboTipoCuenta.setBounds(150, 220, 200, 25);
+        JButton btnRegistrar = new JButton("Registrar");
+        btnRegistrar.setBounds(150, 270, 100, 30);
+        btnRegistrar.setBackground(java.awt.Color.DARK_GRAY);
+        btnRegistrar.setForeground(java.awt.Color.WHITE);
 
-        JLabel lblIne = new JLabel("INE:");
-        lblIne.setBounds(20, 60, 100, 25);
-        add(lblIne);
-        txtIne = new JTextField();
-        txtIne.setBounds(130, 60, 200, 25);
-        add(txtIne);
-
-        JLabel lblDireccion = new JLabel("Dirección:");
-        lblDireccion.setBounds(20, 100, 100, 25);
-        add(lblDireccion);
-        txtDireccion = new JTextField();
-        txtDireccion.setBounds(130, 100, 200, 25);
-        add(txtDireccion);
-
-        JLabel lblTelefono = new JLabel("Teléfono:");
-        lblTelefono.setBounds(20, 140, 100, 25);
-        add(lblTelefono);
-        txtTelefono = new JTextField();
-        txtTelefono.setBounds(130, 140, 200, 25);
-        add(txtTelefono);
-
-        JLabel lblUsuario = new JLabel("Usuario:");
-        lblUsuario.setBounds(20, 180, 100, 25);
-        add(lblUsuario);
-        txtUsuario = new JTextField();
-        txtUsuario.setBounds(130, 180, 200, 25);
-        add(txtUsuario);
-
-        JLabel lblContrasena = new JLabel("Contraseña:");
-        lblContrasena.setBounds(20, 220, 100, 25);
-        add(lblContrasena);
-        txtContrasena = new JTextField();
-        txtContrasena.setBounds(130, 220, 200, 25);
-        add(txtContrasena);
-
-        btnRegistrar = new JButton("Registrar Cliente");
-        btnRegistrar.setBounds(100, 270, 180, 40);
+        add(new JLabel("Nombre:")).setBounds(20, 20, 120, 25); add(txtNombre);
+        add(new JLabel("INE:")).setBounds(20, 60, 120, 25); add(txtINE);
+        add(new JLabel("Dirección:")).setBounds(20, 100, 120, 25); add(txtDireccion);
+        add(new JLabel("Teléfono:")).setBounds(20, 140, 120, 25); add(txtTelefono);
+        add(new JLabel("Monto Inicial:")).setBounds(20, 180, 120, 25); add(txtMonto);
+        add(new JLabel("Tipo de Cuenta:")).setBounds(20, 220, 120, 25); add(comboTipoCuenta);
         add(btnRegistrar);
 
-        btnRegistrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Cliente nuevo = new Cliente(
-                    txtNombre.getText(),
-                    txtIne.getText(),
-                    txtDireccion.getText(),
-                    txtTelefono.getText(),
-                    txtUsuario.getText(),
-                    txtContrasena.getText()
-                );
-                repositorio.agregarCliente(nuevo);
-                JOptionPane.showMessageDialog(null, "Cliente registrado correctamente");
-                limpiarCampos();
-            }
-        });
-    }
+        btnRegistrar.addActionListener(e -> {
+            String nombre = txtNombre.getText();
+            String ine = txtINE.getText();
+            String direccion = txtDireccion.getText();
+            String telefono = txtTelefono.getText();
+            double monto = Double.parseDouble(txtMonto.getText());
+            String tipo = (String) comboTipoCuenta.getSelectedItem();
 
-    private void limpiarCampos() {
-        txtNombre.setText("");
-        txtIne.setText("");
-        txtDireccion.setText("");
-        txtTelefono.setText("");
-        txtUsuario.setText("");
-        txtContrasena.setText("");
+            Cuenta cuenta = null;
+            if (tipo.equals("Crédito") && monto >= 3000) {
+                cuenta = new CuentaCredito(monto);
+            } else if (tipo.equals("Débito")) {
+                cuenta = new CuentaDebito(monto);
+            } else {
+                JOptionPane.showMessageDialog(this, "Monto mínimo para crédito: $3000");
+                return;
+            }
+
+            Cliente nuevo = new Cliente(nombre, ine, direccion, telefono, cuenta);
+            RepositorioClientes.agregarCliente(nuevo);
+            JOptionPane.showMessageDialog(this, "Cliente registrado exitosamente.");
+        });
     }
 }

@@ -1,5 +1,9 @@
 package cajeroautomatico;
-
+/**
+ *
+ * @author Sveen Urzua
+ */
+import cajeroautomatico.modelo.Cuenta;
 import javax.swing.*;
 import java.awt.event.*;
 
